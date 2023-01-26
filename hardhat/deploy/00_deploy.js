@@ -74,5 +74,20 @@ module.exports = async ({ deployments }) => {
         maxPriorityFeePerGas: priorityFee,
         log: true,
     })
-}
 
+    var mockERC20 = await deployLogError("MockERC20", {
+        from: deployer.address,
+        args: [],
+        // maxPriorityFeePerGas to instruct hardhat to use EIP-1559 tx format
+        maxPriorityFeePerGas: priorityFee,
+        log: true,
+    })
+
+    await deployLogError("LenderVault", {
+        from: deployer.address,
+        args: [mockERC20.address,'flFIL','flFIL'],
+        // maxPriorityFeePerGas to instruct hardhat to use EIP-1559 tx format
+        maxPriorityFeePerGas: priorityFee,
+        log: true,
+    })
+}
