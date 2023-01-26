@@ -2,12 +2,17 @@ const { ethers } = require("hardhat");
 const { use, expect } = require("chai");
 
 let accounts;
+let lender0;
+let amount0;
+
 let mockERC20;
 let lenderVault;
 
 before(async function () {
     // get accounts from hardhat
     accounts = await ethers.getSigners();
+    lender0 = accounts[0];
+    amount0 = ethers.utils.parseEther('100');
 });
   
 describe("LenderVault", function () {
@@ -20,10 +25,18 @@ describe("LenderVault", function () {
 
             const LenderVault = await ethers.getContractFactory("LenderVault");
             lenderVault = await LenderVault.deploy(mockERC20.address, 'Junior FILend FIL', 'jfFIL');
-            //await lenderVault.deployed();
-            //expect(await lenderVault.owner()).to.equal(accounts[0].address);
             expect(lenderVault.address).to.not.be.undefined;
             console.log("lenderVault.address: ", lenderVault.address);
         });
+    });
+
+    describe("deposit", function () {
+        it("Should be able to deposit into vault", async function () {
+            await mockERC20.faucet(lender0.address, amount0);
+            await mockERC20.approve(lenderVault.address, amount0);
+            const tx = await lenderVault.deposit(amount0, lender0.address);
+            expect(tx).to.emit(lenderVault, 'Deposit').withArgs(lender0.address, lender0.address, amount0);
+            expect(await lenderVault.balanceOf(lender0.address)).to.equal(amount0);
+        }) 
     });
 });
