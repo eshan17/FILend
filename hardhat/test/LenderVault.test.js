@@ -59,4 +59,15 @@ describe("LenderVault", function () {
             expect(tx0).to.emit(lenderVault, 'Withdraw').withArgs(lender0.address, lender0.address, lender0.address, amount0, amount0);            
         });
     });
+
+    describe("setLoanManager", function () {
+        it("Non-owner should not be able to setLoanManager", async function () {
+            const tx0 = lenderVault.connect(lender1).setLoanManager(lender1.address);
+            await expect(tx0).to.be.revertedWith("Ownable: caller is not the owner");
+        });
+        it("Should be able to setLoanManager", async function () {
+            const tx0 = lenderVault.connect(lender0).setLoanManager(lender0.address);
+            expect(tx0).to.emit(lenderVault, 'LoanManagerUpdated').withArgs(lender0.address);            
+        });
+    });
 });
