@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract LenderVault is ERC4626, Ownable {
     address _loanManager;
+    uint256 _minLiquidAsset;
     uint256 _totalLentOut;
 
     event LoanManagerUpdated(address loanManager);
@@ -27,7 +28,7 @@ contract LenderVault is ERC4626, Ownable {
      */
     function _checkLoanManager() internal view virtual {
         require(_loanManager != address(0), "loanManager cannot be zero");
-        require(_loanManager == _msgSender(), "caller is not the loanManager");
+        require(_loanManager == _msgSender(), "onlyLoanManager");
     }
 
     /**
@@ -42,6 +43,8 @@ contract LenderVault is ERC4626, Ownable {
         require(amount_ > 0, "amount_ cannot be zero");
         require(receiver_ != address(0), "receiver_ cannot be zero");
         require(amount_ <= totalAssets(), "out of assets");
+        require(totalAssets() - amount_ >= _minLiquidAsset, "out of liquid assets");
+
         _totalLentOut += amount_;
         SafeERC20.safeTransfer(IERC20(asset()), receiver_, amount_);
         emit LentOut(amount_, receiver_);

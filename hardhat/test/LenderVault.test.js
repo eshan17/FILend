@@ -2,8 +2,8 @@ const { ethers } = require("hardhat");
 const { use, expect } = require("chai");
 
 let accounts;
-let lender0, lender1;
-let amount0, amount1;
+let owner, lender0, lender1, loanManager;
+let amount0, amount1, loanAmount2;
 
 let mockERC20;
 let lenderVault;
@@ -11,10 +11,13 @@ let lenderVault;
 before(async function () {
     // get accounts from hardhat
     accounts = await ethers.getSigners();
+    owner = accounts[0];
     lender0 = accounts[0];
     lender1 = accounts[1];
+    loanManager = accounts[2];
     amount0 = ethers.utils.parseEther('100');
     amount1 = ethers.utils.parseEther('100');
+    loanAmount2 = ethers.utils.parseEther('10');
 });
   
 describe("LenderVault", function () {
@@ -61,13 +64,26 @@ describe("LenderVault", function () {
     });
 
     describe("setLoanManager", function () {
-        it("Non-owner should not be able to setLoanManager", async function () {
+        it("onlyOwner", async function () {
             const tx0 = lenderVault.connect(lender1).setLoanManager(lender1.address);
             await expect(tx0).to.be.revertedWith("Ownable: caller is not the owner");
         });
         it("Should be able to setLoanManager", async function () {
-            const tx0 = lenderVault.connect(lender0).setLoanManager(lender0.address);
-            expect(tx0).to.emit(lenderVault, 'LoanManagerUpdated').withArgs(lender0.address);            
+            const tx0 = lenderVault.connect(owner).setLoanManager(loanManager.address);
+            expect(tx0).to.emit(lenderVault, 'LoanManagerUpdated').withArgs(loanManager.address);            
+        });
+    });
+
+    describe("borrowFromVault", function () {
+        it("onlyLoanManager", async function () {
+            const tx0 = lenderVault.connect(owner).borrowFromVault(loanAmount2, owner.address);
+            await expect(tx0).to.be.revertedWith("onlyLoanManager");
+        });
+        it("loanManager should be able to borrow from vault", async function () {
+            const tx0 = await lenderVault.connect(loanManager).borrowFromVault(loanAmount2, loanManager.address);
+            expect(tx0).to.emit(lenderVault, 'LentOut').withArgs(loanAmount2, loanManager.address);
+            expect(await lenderVault.totalLentOut()).to.equal(loanAmount2);
+            expect(await mockERC20.balanceOf(loanManager.address)).to.equal(loanAmount2);
         });
     });
 });
