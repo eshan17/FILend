@@ -6,33 +6,17 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
+import "./LenderVaultStorage.sol";
+
 /**
  * @title LenderVault
  */
-contract LenderVault is ERC4626, Ownable {
-    // address of load manager
-    address private _loanManager;
-    // minimum liquid asset
-    uint256 private _minLiquidAsset;
-    // accumulative amount of asset deposited
-    uint256 private _totalDeposited;
-    // accumulative amount of asset lent out
-    uint256 private _totalLentOut;
-    // current amount of asset lent out = totalLentOut - _totalPrincipalReceived
-    uint256 private _currentLentOut;
-    // accumulative amount of principal received
-    uint256 private _totalPrincipalReceived;
-    // accumulative amount of interest received
-    uint256 private _totalInterestReceived;
-    // accumulative amount of principal loss
-    uint256 private _totalPrincipalLoss;
-
+contract LenderVault is ERC4626, Ownable, LenderVaultStorage {
     // Add the library methods
     using EnumerableSet for EnumerableSet.AddressSet;
-    // address set of all lenders
-    EnumerableSet.AddressSet private _lenderSet;
-
+    
     event LoanManagerUpdated(address loanManager);
+    event DefaultLockPeriodUpdated(uint lockPeriod);
     event LentOut(uint256 amount, address receiver);
     event Payback(uint256 principal, uint256 interest);
     event PrincipalLoss(uint256 loss);
@@ -64,6 +48,16 @@ contract LenderVault is ERC4626, Ownable {
         require(loanManager_ != address(0), "loanManager_ cannot be zero");
         _loanManager = loanManager_;
         emit LoanManagerUpdated(loanManager_);
+    }
+
+    /**
+     * @dev set the address of the loan manager contract
+     * onlyOwner
+     * emit LoanManagerUpdated
+     */
+    function setDefaultLockPeriod(uint lockPeriod_) external onlyOwner {
+        _defaultLockPeriod = lockPeriod_;
+        emit DefaultLockPeriodUpdated(lockPeriod_);
     }
 
     /**
@@ -187,54 +181,5 @@ contract LenderVault is ERC4626, Ownable {
         _currentLentOut -= loss_;
         _totalPrincipalLoss += loss_;
         emit PrincipalLoss(loss_);
-    }
-
-    /**
-     * @dev return total number lenders
-     */
-    function numOfLenders() external view returns (uint256) {
-        return _lenderSet.length();
-    }
-
-    /**
-     * @dev return _totalDeposited
-     */
-    function totalDeposited() external view returns (uint256) {
-        return _totalDeposited;
-    }
-
-    /**
-     * @dev return _totalLentOut
-     */
-    function totalLentOut() external view returns (uint256) {
-        return _totalLentOut;
-    }
-
-    /**
-     * @dev return _currentLentOut
-     */
-    function currentLentOut() external view returns (uint256) {
-        return _currentLentOut;
-    }
-
-    /**
-     * @dev return _totalPrincipalReceived
-     */
-    function totalPrincipalReceived() external view returns (uint256) {
-        return _totalPrincipalReceived;
-    }
-
-    /**
-     * @dev return _totalInterestReceived
-     */
-    function totalInterestReceived() external view returns (uint256) {
-        return _totalInterestReceived;
-    }
-
-    /**
-     * @dev return _totalPrincipalLoss
-     */
-    function totalPrincipalLoss() external view returns (uint256) {
-        return _totalPrincipalLoss;
     }
 }
