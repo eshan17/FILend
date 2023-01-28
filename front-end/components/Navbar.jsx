@@ -19,19 +19,19 @@ const Navbar = () => {
           >
             <a
               href="#"
-              class=" inline-block   transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
+              class=" inline-block hover:scale-110  transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
             >
               HOME
             </a>
             <a
               href="#"
-              class=" inline-block transition ease-in duration-150 text-sm hover:text-fil-primary   px-2 py-2"
+              class=" inline-block hover:scale-110 transition ease-in duration-150 text-sm hover:text-fil-primary   px-2 py-2"
             >
               LENDER
             </a>
             <a
               href="#"
-              class=" inline-block  transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
+              class=" inline-block hover:scale-110 transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
             >
               BORROWER
             </a>
