@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "compile": "hardhat compile",
-    "test": "hardhat test test/unit/*_test.js --network hardhat",
+    "test": "hardhat test test/*.test.js --network hardhat",
     "test-staging": "hardhat test test/staging/*_test.js --network goerli",
     "lint": "solhint 'contracts/*.sol'",
     "lint:fix": "solhint 'contracts/**/*.sol' --fix",
@@ -38,7 +38,7 @@
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
-    "@openzeppelin/contracts": "^4.8.0",
+    "@openzeppelin/contracts": "^4.8.1",
     "@typechain/hardhat": "^6.1.2",
     "@zondax/filecoin-solidity": "^0.4.0-beta.1",
     "@zondax/filecoin-solidity-mock-api": "^0.2.0",
