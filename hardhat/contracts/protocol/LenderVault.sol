@@ -18,12 +18,14 @@ contract LenderVault is ERC4626, Ownable {
     uint256 private _totalDeposited;
     // accumulative amount of asset lent out
     uint256 private _totalLentOut;
-    // current amount of asset lent out = totalLentOut - totalPaybackReceived
+    // current amount of asset lent out = totalLentOut - _totalPrincipalReceived
     uint256 private _currentLentOut;
     // accumulative amount of principal received
     uint256 private _totalPrincipalReceived;
     // accumulative amount of interest received
     uint256 private _totalInterestReceived;
+    // accumulative amount of principal loss
+    uint256 private _totalPrincipalLoss;
 
     // Add the library methods
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -33,6 +35,7 @@ contract LenderVault is ERC4626, Ownable {
     event LoanManagerUpdated(address loanManager);
     event LentOut(uint256 amount, address receiver);
     event Payback(uint256 principal, uint256 interest);
+    event PrincipalLoss(uint256 loss);
 
     /**
      * @dev constructor
@@ -53,15 +56,9 @@ contract LenderVault is ERC4626, Ownable {
     }
 
     /**
-     * @dev return total number lenders
-     */
-    function numOfLenders() external view returns (uint256) {
-        return _lenderSet.length();
-    }
-
-    /**
      * @dev set the address of the loan manager contract
      * onlyOwner
+     * emit LoanManagerUpdated
      */
     function setLoanManager(address loanManager_) external onlyOwner {
         require(loanManager_ != address(0), "loanManager_ cannot be zero");
@@ -90,6 +87,7 @@ contract LenderVault is ERC4626, Ownable {
      * @param amount_ The amount of asset to borrow
      * @param receiver_ The address of the receiver
      * onlyLoanManager
+     * emit LentOut
      */
     function borrowFromVault(uint256 amount_, address receiver_) external onlyLoanManager {
         require(amount_ > 0, "amount_ cannot be zero");
@@ -101,20 +99,6 @@ contract LenderVault is ERC4626, Ownable {
         _currentLentOut += amount_;
         SafeERC20.safeTransfer(IERC20(asset()), receiver_, amount_);
         emit LentOut(amount_, receiver_);
-    }
-
-    /**
-     * @dev return _totalLentOut
-     */
-    function totalLentOut() external view returns (uint256) {
-        return _totalLentOut;
-    }
-
-    /**
-     * @dev return _currentLentOut
-     */
-    function currentLentOut() external view returns (uint256) {
-        return _currentLentOut;
     }
 
     /**
@@ -139,10 +123,33 @@ contract LenderVault is ERC4626, Ownable {
     }
 
     /**
+     * @dev subtract loss shares from all lenders in the vault according to the ratio of their shares 
+     * @param loss_ The amount of loss to subtract
+     * internal function to be called by realizePrincipalLoss
+     */
+    function _subtractLossShares(uint256 loss_) internal {
+        require(loss_ > 0, "loss_ cannot be zero");
+        uint256 totalShares_ = totalSupply();
+        require(totalShares_ > 0, "totalShares cannot be zero");
+        require(loss_ <= totalShares_, "loss_ cannot be greater than totalShares_");
+
+        address[] memory lenders = _lenderSet.values();
+        for (uint256 i = 0; i < lenders.length; i++) {
+            address lender_ = lenders[i];
+            uint256 share_ = balanceOf(lender_);
+            if (share_ > 0) {
+                uint256 lossShare_ = loss_ * share_ / totalShares_;
+                _burn(lender_, lossShare_);
+            }
+        }
+    }
+
+    /**
      * @dev pay back to vault, the loan details are being managed by the loan manager, the vault does not know anything about the loan
      * @param principal_ The amount of principal to pay back
      * @param interest_ The amount of interest to pay back
      * onlyLoanManager
+     * emit Payback
      */
     function payBackToVault(uint256 principal_, uint256 interest_) external onlyLoanManager {
         require(principal_ + interest_ > 0, "payback cannot be zero");
@@ -167,9 +174,67 @@ contract LenderVault is ERC4626, Ownable {
     }
 
     /**
-     * @dev return the total amount of pay back received
+     * @dev In case of loan default, the loan manager will call this function to realize the loss
+     * @param loss_ The amount of principal loss
+     * onlyLoanManager
+     * emit PrincipalLoss
      */
-    function totalPaybackReceived() external view returns (uint256) {
-        return _totalPrincipalReceived + _totalInterestReceived;
+    function realizePrincipalLoss(uint256 loss_) external onlyLoanManager {
+        require(loss_ > 0, "loss_ cannot be zero");
+        require(loss_ <= _currentLentOut, "loss_ cannot be greater than _currentLentOut");
+
+        _subtractLossShares(loss_);
+        _currentLentOut -= loss_;
+        _totalPrincipalLoss += loss_;
+        emit PrincipalLoss(loss_);
+    }
+
+    /**
+     * @dev return total number lenders
+     */
+    function numOfLenders() external view returns (uint256) {
+        return _lenderSet.length();
+    }
+
+    /**
+     * @dev return _totalDeposited
+     */
+    function totalDeposited() external view returns (uint256) {
+        return _totalDeposited;
+    }
+
+    /**
+     * @dev return _totalLentOut
+     */
+    function totalLentOut() external view returns (uint256) {
+        return _totalLentOut;
+    }
+
+    /**
+     * @dev return _currentLentOut
+     */
+    function currentLentOut() external view returns (uint256) {
+        return _currentLentOut;
+    }
+
+    /**
+     * @dev return _totalPrincipalReceived
+     */
+    function totalPrincipalReceived() external view returns (uint256) {
+        return _totalPrincipalReceived;
+    }
+
+    /**
+     * @dev return _totalInterestReceived
+     */
+    function totalInterestReceived() external view returns (uint256) {
+        return _totalInterestReceived;
+    }
+
+    /**
+     * @dev return _totalPrincipalLoss
+     */
+    function totalPrincipalLoss() external view returns (uint256) {
+        return _totalPrincipalLoss;
     }
 }

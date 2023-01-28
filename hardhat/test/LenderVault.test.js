@@ -3,7 +3,7 @@ const { use, expect } = require("chai");
 
 let accounts;
 let owner, lender0, lender1, loanManager;
-let depositAmount0, depositAmount1, loanAmount2, paybackPrincipal2, paybackInterest2;
+let depositAmount0, depositAmount1, loanAmount2, paybackPrincipal2, paybackInterest2, lossPrincipal2;
 
 let mockERC20;
 let lenderVault;
@@ -20,6 +20,7 @@ before(async function () {
     loanAmount2 = ethers.utils.parseEther('10');
     paybackPrincipal2 = ethers.utils.parseEther('5');
     paybackInterest2 = ethers.utils.parseEther('5');
+    lossPrincipal2 = ethers.utils.parseEther('2');
 });
   
 describe("LenderVault", function () {
@@ -105,5 +106,14 @@ describe("LenderVault", function () {
             expect(await lenderVault.currentLentOut()).to.equal(loanAmount2.sub(paybackPrincipal2));
             expect(await lenderVault.balanceOf(lender1.address)).to.equal(depositAmount1.add(paybackInterest2));
         });
+    });
+
+    describe("realizePrincipalLoss", function () {
+        it("loanManager should be able to put loss on vault", async function () {
+            const tx0 = await lenderVault.connect(loanManager).realizePrincipalLoss(lossPrincipal2);
+            expect(tx0).to.emit(lenderVault, 'PrincipalLoss').withArgs(lossPrincipal2);
+            expect(await lenderVault.currentLentOut()).to.equal(loanAmount2.sub(paybackPrincipal2).sub(lossPrincipal2));
+            expect(await lenderVault.balanceOf(lender1.address)).to.equal(depositAmount1.add(paybackInterest2).sub(lossPrincipal2));
+        });        
     });
 });
