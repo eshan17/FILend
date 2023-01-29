@@ -13,11 +13,13 @@
     "@rainbow-me/rainbowkit": "^0.8.1",
     "ethers": "^5.7.2",
     "get-google-fonts": "^1.2.2",
+    "loaderjs": "^1.0.0",
     "next": "13.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-reveal": "^1.2.2",
     "react-scroll": "^1.8.9",
+    "react-spinners": "^0.13.8",
     "wagmi": "^0.11.0"
   },
   "devDependencies": {
