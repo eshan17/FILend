@@ -33,7 +33,14 @@ module.exports = {
       black: "900",
     },
 
-    extend: {},
+    extend: {
+      inset: {
+        100: "100px",
+        235: "235px",
+        142: "142px",
+        140: "140px",
+      },
+    },
   },
   plugins: [],
 };
