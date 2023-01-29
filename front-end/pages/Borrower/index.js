@@ -9,7 +9,7 @@ import img from "@/public/Images/img7.svg";
 import waves from "@/public/Images/waves.svg";
 import { useAccount } from "wagmi";
 import { useRouter } from "next/router";
-
+import { useEffect } from "react";
 const index = () => {
   const router = useRouter();
   const { address, isConnecting, isDisconnected, isConnected } = useAccount();
