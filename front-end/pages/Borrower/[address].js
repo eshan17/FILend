@@ -13,7 +13,7 @@ const address = () => {
     useAccount();
   useEffect(() => {
     if (isDisconnected) {
-      router.push(`/Lender`);
+      router.push(`/Borrower`);
     }
   }, [isConnecting, isConnected]);
 
