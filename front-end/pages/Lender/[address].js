@@ -33,7 +33,7 @@ const address = () => {
   return (
     <>
       <Fade top>
-        <Navbar button={true} />
+        <Navbar button={true} curretLink={1} />
       </Fade>
 
       {loading ? (
@@ -68,7 +68,7 @@ const address = () => {
                         setJuniorPool(false);
                       }}
                     >
-                      <button className="text-md font-semibold  px-4 py-2    transition ease-in duration-150 text-sm  text-white bg-fil-secondary border-2 border-white  hover:bg-white  hover:text-fil-secondary ">
+                      <button className="text-md font-semibold  px-4 py-2    transition ease-in duration-150 text-sm  text-white bg-fil-secondary border-2 border-white  hover:scale-110  ">
                         Senior Pool
                       </button>
                     </div>
@@ -118,7 +118,7 @@ const address = () => {
                         setJuniorPool(true);
                       }}
                     >
-                      <button className="text-md font-semibold  px-4 py-2    transition ease-in duration-150 text-sm  text-white bg-fil-secondary border-2 border-white  hover:bg-white  hover:text-fil-secondary ">
+                      <button className="text-md font-semibold  px-4 py-2    transition ease-in duration-150 text-sm  text-white bg-fil-secondary border-2 border-white  hover:scale-110  ">
                         Junior Pool
                       </button>
                     </div>
@@ -129,7 +129,7 @@ const address = () => {
                         setJuniorPool(false);
                       }}
                     >
-                      <button className="text-md font-semibold   bg-white px-4 py-2 border-2 text-fil-secondary   transition ease-in duration-150 text-sm  hover:text-white hover:bg-fil-secondary hover:border-2 hover:border-white   ">
+                      <button className="text-md font-semibold   bg-white px-4 py-2 border-2 text-fil-secondary   transition ease-in duration-150 text-sm     hover:scale-110    ">
                         Senior Pool
                       </button>
                     </div>

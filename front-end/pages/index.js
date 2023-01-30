@@ -34,6 +34,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+
   useEffect(() => {
     // Fetch data here, for example:
     setTimeout(() => {
@@ -56,7 +57,7 @@ export default function Home() {
     <>
       <div>
         <Fade top>
-          <Navbar button={true} />
+          <Navbar button={true} curretLink={0} />
         </Fade>
       </div>
       {/* Home section */}

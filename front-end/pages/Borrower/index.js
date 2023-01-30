@@ -31,7 +31,7 @@ const index = () => {
   return (
     <>
       <Fade top>
-        <Navbar button={true} />
+        <Navbar button={true} curretLink={2} />
       </Fade>
 
       {loading ? (
