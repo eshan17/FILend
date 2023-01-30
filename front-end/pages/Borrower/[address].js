@@ -6,8 +6,10 @@ import { useAccount } from "wagmi";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
-
+import LenderLoan from "@/components/LenderLoan";
 import Loading from "@/components/Loading";
+import waves from "@/public/Images/waves.svg";
+import Image from "next/image";
 
 const address = () => {
   const router = useRouter();
@@ -58,7 +60,99 @@ const address = () => {
                     </button>
                   </div>
                 </div>
+                <div className="h-10"></div>
               </div>
+
+              {/* Form */}
+              <div className=" flex  justify-center items-center     ">
+                <div className="flex flex-col   py-16 w-1/4 space-y-6 justify-start items-center  shadow-black rounded-xl -mt-16 bg-white shadow-md   ">
+                  <div className="flex  text-sm space-x-10      text-black rounded-sm  bg-white     ">
+                    <div className=" font-light pr-5"> Amount</div>
+                    <div className="    border-2  border-fil-primary rounded-md px-16 py-3  font-light "></div>
+                  </div>
+
+                  <div className="flex  text-sm space-x-10   items-center text-black rounded-sm bg-white   ">
+                    <div className=" font-light"> Loan Duration</div>
+                    <div className=" border-2  border-fil-primary rounded-md px-16 py-3 font-light "></div>
+                  </div>
+
+                  <div className="mt-6">
+                    <button className="text-md font-semibold   bg-fil-secondary px-16 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
+                      Stake
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dashboard */}
+
+              <div className="flex flex-col rounded-xl border-2 mt-24  pb-24 pl-8">
+                <h1 className="text-3xl m-8 text-black font-semibold">
+                  Dashboard
+                </h1>
+
+                <div className="grid-cols-9   px-4 grid">
+                  <div>S.No</div>
+                  <div>Pool Type</div>
+                  <div>Lend Amount</div>
+                  <div>Total Return</div>
+                  <div>Interest Rate</div>
+                  <div>Lending Date</div>
+                  <div>End Date</div>
+                  <div>Status</div>
+                  <div>Transaction</div>
+                </div>
+
+                <LenderLoan
+                  SerialNo={1}
+                  PoolType={"Junior Pool"}
+                  LendAmount={"200 FIL"}
+                  TotalReturn={"300 FIL"}
+                  InterestRate={"30%"}
+                  LendingDate={"04/09/2023"}
+                  EndingDate={"04/09/2024"}
+                  Status={"Active"}
+                  active={true}
+                />
+
+                <LenderLoan
+                  SerialNo={2}
+                  PoolType={"Senior Pool"}
+                  LendAmount={"200 FIL"}
+                  TotalReturn={"300 FIL"}
+                  InterestRate={"30%"}
+                  LendingDate={"04/09/2023"}
+                  EndingDate={"04/09/2024"}
+                  Status={"Completed"}
+                  active={false}
+                />
+
+                <LenderLoan
+                  SerialNo={3}
+                  PoolType={"Senior Pool"}
+                  LendAmount={"200 FIL"}
+                  TotalReturn={"300 FIL"}
+                  InterestRate={"30%"}
+                  LendingDate={"04/09/2023"}
+                  EndingDate={"04/09/2024"}
+                  Status={"Active"}
+                  active={true}
+                />
+
+                <LenderLoan
+                  SerialNo={4}
+                  PoolType={"Senior Pool"}
+                  LendAmount={"200 FIL"}
+                  TotalReturn={"300 FIL"}
+                  InterestRate={"30%"}
+                  LendingDate={"04/09/2023"}
+                  EndingDate={"04/09/2024"}
+                  Status={"Active"}
+                  active={true}
+                />
+              </div>
+
+              <Image src={waves} />
             </Fade>
           </>
         )}

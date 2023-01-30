@@ -12,8 +12,10 @@ module.exports = {
     colors: {
       "fil-primary": "#0190FF",
       "fil-secondary": "#0C72C2",
+      "fil-brown": "#575151",
       black: "#000000",
       white: "#FFFFFF",
+      puprle: "#6750A4",
     },
     fontFamily: {
       sans: ["ui-sans-serif", "system-ui", "Work Sans", "sans-serif"],
