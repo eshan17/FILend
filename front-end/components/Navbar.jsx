@@ -11,13 +11,6 @@ const Navbar = ({ button, curretLink }) => {
   const { address, isConnecting, isDisconnected, isConnected, isReconnecting } =
     useAccount();
 
-  useEffect(() => {
-    // setTimeout(() => {
-    //   setData({ message: "Data loaded" });
-    //   setLoading(false);
-    // }, 500);
-  }, []);
-
   return (
     <>
       <nav class="flex first-letter: items-center justify-around p-5 container mx-auto font-family-work-sans  ">
