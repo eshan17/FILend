@@ -32,7 +32,7 @@ const address = () => {
   return (
     <>
       <Fade top>
-        <Navbar button={true} />
+        <Navbar button={true} curretLink={2} />
       </Fade>
 
       <div>
@@ -147,7 +147,7 @@ const address = () => {
                   InterestRate={"30%"}
                   LendingDate={"04/09/2023"}
                   EndingDate={"04/09/2024"}
-                  Status={"Active"}
+                  Status={"Active "}
                   active={true}
                 />
               </div>
