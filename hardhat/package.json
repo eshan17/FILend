@@ -10,7 +10,8 @@
     "lint:fix": "solhint 'contracts/**/*.sol' --fix",
     "format": "prettier --write .",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js",
-    "fuzzing": "docker run -it --rm -v $PWD:/src trailofbits/eth-security-toolbox"
+    "fuzzing": "docker run -it --rm -v $PWD:/src trailofbits/eth-security-toolbox",
+    "deploy": "hardhat deploy --export-all ../front-end/contracts/hardhat_contracts.json"
   },
   "license": "MIT",
   "devDependencies": {

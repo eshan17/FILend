@@ -75,7 +75,7 @@ module.exports = async ({ deployments }) => {
         log: true,
     })
 
-    var mockERC20 = await deployLogError("MockERC20", {
+    const mockERC20 = await deployLogError("MockERC20", {
         from: deployer.address,
         args: [],
         // maxPriorityFeePerGas to instruct hardhat to use EIP-1559 tx format
@@ -83,10 +83,18 @@ module.exports = async ({ deployments }) => {
         log: true,
     })
 
-    await deployLogError("LenderVault", {
+    const lenderVaultJunior = await deployLogError("LenderVaultJunior", {
+        contract: "LenderVault",
         from: deployer.address,
-        args: [mockERC20.address,'flFIL','flFIL'],
-        // maxPriorityFeePerGas to instruct hardhat to use EIP-1559 tx format
+        args: [mockERC20.address,'flJFIL','flJFIL'],
+        maxPriorityFeePerGas: priorityFee,
+        log: true,
+    })
+
+    const lenderVaultSenior = await deployLogError("LenderVaultSenior", {
+        contract: "LenderVault",
+        from: deployer.address,
+        args: [mockERC20.address,'flSFIL','flSFIL'],
         maxPriorityFeePerGas: priorityFee,
         log: true,
     })
