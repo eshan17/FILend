@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
  * @title LenderVaultStorage
  */
 contract LenderVaultStorage {
-    // address of load manager
+    // address of loan manager
     address internal _loanManager;
     // minimum liquid asset
     uint256 internal _minLiquidAsset;
