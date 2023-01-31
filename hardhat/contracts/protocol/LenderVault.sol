@@ -33,7 +33,7 @@ contract LenderVault is ERC4626, Ownable, LenderVaultStorage {
 
     }
 
-    //access control ===========================
+    //onlyOwner ===========================
 
     /**
      * @dev update the address of the loan manager contract
