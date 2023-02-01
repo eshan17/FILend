@@ -13,4 +13,17 @@ contract MockERC20 is ERC20 {
     function decimals() public view virtual override returns (uint8) {
         return 18;
     }
+
+    function wrapAndApproveTo(address approveTo) external payable {
+        require(msg.value > 0, "msg.value cannot be zero");
+        _mint(_msgSender(), msg.value);
+        approve(approveTo, msg.value);
+    }
+
+    function unwrap(uint256 amount) external {
+        require(amount > 0, "amount cannot be zero");
+        require(balanceOf(_msgSender()) >= amount, "insufficient balance");
+        _burn(_msgSender(), amount);
+        payable(_msgSender()).transfer(amount);
+    }
 }
