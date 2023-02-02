@@ -3,8 +3,8 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers");
 const { use, expect } = require("chai");
 
 let accounts;
-let owner, lender0, lender1, loanManager, lender3;
-let depositAmount0, depositAmount1, depositAmount3, loanAmount2, paybackPrincipal2, paybackInterest2, lossPrincipal2;
+let owner, lender0, lender1, loanManager, lender3, lender4;
+let depositAmount0, depositAmount1, depositAmount3, loanAmount2, paybackPrincipal2, paybackInterest2, lossPrincipal2, wrapAmount4;
 let lockPeriod3;
 
 let mockERC20;
@@ -18,6 +18,7 @@ before(async function () {
     lender1 = accounts[1];
     loanManager = accounts[2];
     lender3 = accounts[3];
+    lender4 = accounts[4];
     depositAmount0 = ethers.utils.parseEther('100');
     depositAmount1 = ethers.utils.parseEther('100');
     depositAmount3 = ethers.utils.parseEther('100');
@@ -26,6 +27,7 @@ before(async function () {
     paybackInterest2 = ethers.utils.parseEther('5');
     lossPrincipal2 = ethers.utils.parseEther('2');
     lockPeriod3 = 100000;
+    wrapAmount4 = ethers.utils.parseEther('500');
 });
   
 describe("LenderVault", function () {
@@ -45,8 +47,9 @@ describe("LenderVault", function () {
 
     describe("deposit", function () {
         it("Lenders should be able to deposit into vault", async function () {
-            await mockERC20.faucet(lender0.address, depositAmount0);
-            await mockERC20.connect(lender0).approve(lenderVault.address, depositAmount0);
+            // await mockERC20.faucet(lender0.address, depositAmount0);
+            // await mockERC20.connect(lender0).approve(lenderVault.address, depositAmount0);
+            await mockERC20.connect(lender0).wrapAndApproveTo(lenderVault.address, {value: depositAmount0}); //wrap native token (tFIL) to test token and approve
             expect(await lenderVault.totalAssets()).to.equal(0);
             expect(await lenderVault.balanceOf(lender0.address)).to.equal(0);
             const tx0 = await lenderVault.connect(lender0).deposit(depositAmount0, lender0.address);
@@ -55,8 +58,9 @@ describe("LenderVault", function () {
             expect(await lenderVault.virtualBalanceOf(lender0.address)).to.equal(depositAmount0);
             expect(await lenderVault.totalAssets()).to.equal(depositAmount0);
 
-            await mockERC20.faucet(lender1.address, depositAmount1);
-            await mockERC20.connect(lender1).approve(lenderVault.address, depositAmount1);
+            // await mockERC20.faucet(lender1.address, depositAmount1);
+            // await mockERC20.connect(lender1).approve(lenderVault.address, depositAmount1);
+            await mockERC20.connect(lender1).wrapAndApproveTo(lenderVault.address, {value: depositAmount1}); //wrap native token (tFIL) to test token and approve
             expect(await lenderVault.balanceOf(lender1.address)).to.equal(0);
             const tx1 = await lenderVault.connect(lender1).deposit(depositAmount1, lender1.address);
             expect(tx1).to.emit(lenderVault, 'Deposit').withArgs(lender1.address, lender1.address, depositAmount1);
@@ -123,7 +127,7 @@ describe("LenderVault", function () {
             expect(tx0).to.emit(lenderVault, 'PrincipalLoss').withArgs(lossPrincipal2);
             expect(await lenderVault.currentLentOut()).to.equal(loanAmount2.sub(paybackPrincipal2).sub(lossPrincipal2));
             expect(await lenderVault.virtualBalanceOf(lender1.address)).to.equal(depositAmount1.add(paybackInterest2).sub(lossPrincipal2));
-        });        
+        });
     });
 
     describe("deposit and redeem with lock period", function () {
@@ -137,8 +141,9 @@ describe("LenderVault", function () {
         });
         it("Lender should be able to deposit into vault", async function () {
             expect(await lenderVault.lockPeriod()).to.equal(lockPeriod3);
-            await mockERC20.faucet(lender3.address, depositAmount3);
-            await mockERC20.connect(lender3).approve(lenderVault.address, depositAmount3);
+            //await mockERC20.faucet(lender3.address, depositAmount3);
+            //await mockERC20.connect(lender3).approve(lenderVault.address, depositAmount3);
+            await mockERC20.connect(lender3).wrapAndApproveTo(lenderVault.address, {value: depositAmount3}); //wrap native token (tFIL) to test token and approve
             expect(await lenderVault.balanceOf(lender3.address)).to.equal(0);
             const tx0 = await lenderVault.connect(lender3).deposit(depositAmount3, lender3.address);
             expect(tx0).to.emit(lenderVault, 'Deposit').withArgs(lender3.address, lender3.address, depositAmount3);
@@ -161,5 +166,17 @@ describe("LenderVault", function () {
             const withdrawAssets3 = await mockERC20.balanceOf(lender3.address)
             expect(Math.abs(depositAmount3.sub(withdrawAssets3))).to.be.lessThan(2);
         });
-    });    
+    });
+
+    describe("Native token FIL", function () {
+        it("should be able to wrap native token to test token", async function () {
+            expect(await mockERC20.balanceOf(lender4.address)).to.equal(0);
+            await mockERC20.connect(lender4).wrapAndApproveTo(lenderVault.address, {value: wrapAmount4});
+            expect(await mockERC20.balanceOf(lender4.address)).to.equal(wrapAmount4);
+        });
+        it("should be able to unwrap test token to native token", async function () {
+            await mockERC20.connect(lender4).unwrap(wrapAmount4);
+            expect(await mockERC20.balanceOf(lender4.address)).to.equal(0);
+        });
+    });
 });
