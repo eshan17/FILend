@@ -3,24 +3,72 @@
 import "../styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 
-import {
-  RainbowKitProvider,
-  getDefaultWallets,
-  darkTheme,
-} from "@rainbow-me/rainbowkit";
+// import { createAuthenticationAdapter } from "@rainbow-me/rainbowkit";
+// import { SiweMessage } from "siwe";
+
+// import { SessionProvider } from "next-auth/react";
+// import { AppProps } from "next/app";
+
+// import {
+//   RainbowKitSiweNextAuthProvider,
+//   GetSiweMessageOptions,
+// } from "@rainbow-me/rainbowkit-siwe-next-auth";
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+
+import { getDefaultWallets, darkTheme } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { mainnet, polygon, optimism, arbitrum, goerli } from "wagmi/chains";
+import {
+  mainnet,
+  polygon,
+  optimism,
+  arbitrum,
+  goerli,
+  filecoinHyperspace,
+  filecoin,
+} from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
+const getSiweMessageOptions = () => ({
+  statement: "Sign in to my RainbowKit app",
+});
+
+// const defaultChains: Chain[] = [
+const defaultChains = [
+  {
+    ...mainnet,
+  },
+
+  {
+    ...filecoin,
+    iconUrl: "https://i.imgur.com/oo7FPwT.png",
+  },
+
+  {
+    ...filecoinHyperspace,
+    iconUrl: "https://i.imgur.com/oo7FPwT.png",
+  },
+
+  {
+    ...polygon,
+  },
+  { ...optimism },
+
+  { ...arbitrum },
+  // { ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : []) },
+];
+
 const { chains, provider, webSocketProvider } = configureChains(
-  [
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : []),
-  ],
+  // [
+  //   mainnet,
+  //   filecoinHyperspace,
+  //   filecoin,
+  //   polygon,
+  //   optimism,
+  //   arbitrum,
+  //   ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : []),
+  // ],
+  defaultChains,
   [
     alchemyProvider({
       // This is Alchemy's default API key.

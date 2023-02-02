@@ -19,9 +19,28 @@ const address = () => {
   const [juniorPool, setJuniorPool] = useState(true);
   const [data, setData] = useState(null);
 
+  const [j_amount, setJuniorAmount] = useState(0);
+  const [j_interestRate, setJuniorInterestRate] = useState(0);
+  const [j_totalReturn, setJuniorTotalReturn] = useState(0);
+
+  const [s_amount, setSeniorAmount] = useState(0);
+  const [s_interestRate, setSeniorInterestRate] = useState(0);
+  const [s_totalReturn, setSeniorTotalReturn] = useState(0);
+
+  const J_handleChange = (event) => {
+    setJuniorAmount(event.target.value);
+    setJuniorTotalReturn(j_amount * 5);
+  };
+
+  const S_handleChange = (event2) => {
+    setSeniorAmount(event2.target.value);
+    setSeniorTotalReturn(s_amount * 5);
+  };
+
   useEffect(() => {
     setTimeout(() => {
       setData({ message: "Data loaded" });
+
       setLoading(false);
     }, 100);
 
@@ -87,7 +106,9 @@ const address = () => {
 
                         <div className="flex-col space-y-2">
                           <h2>Total Return</h2>
-                          <h2 className="border-2 px-8 text-center ">0 FIL</h2>
+                          <h2 className="border-2 px-8 text-center ">
+                            {j_totalReturn} FIL
+                          </h2>
                         </div>
 
                         <div className="flex-col space-y-2">
@@ -99,6 +120,53 @@ const address = () => {
                       </div>
                     </div>
                     <div className="h-20"></div>
+                  </div>
+
+                  {/* Form */}
+                  <div className=" flex  justify-center items-center     ">
+                    <div className="flex flex-col   py-16 w-1/4 space-y-6 justify-center items-center  shadow-black rounded-xl -mt-24 bg-white shadow-md   ">
+                      <form className="space-y-6   justify-center items-center">
+                        <div className="flex  text-sm justify-between items-center space-x-10 text-black rounded-sm  bg-white     ">
+                          <div className=" font-light  w-16"> Amount</div>
+
+                          <input
+                            className="border-2  border-fil-primary rounded-md px-4 py-1  font-light"
+                            id="title"
+                            type="text"
+                            required
+                            value={j_amount}
+                            onChange={J_handleChange}
+                            placeholder="1000 FIL"
+                          />
+                        </div>
+
+                        <div className="flex  text-sm space-x-10   items-center text-black rounded-sm bg-white   ">
+                          <div className="font-light w-16"> Loan Duration</div>
+
+                          {/* <input
+                      className="border-2  border-fil-primary rounded-md px-4 py-1  font-light"
+                      id="duration"
+                      type="text"
+                      required
+                      placeholder="6 months"
+                    /> */}
+                          <select
+                            id="duration"
+                            name="duration"
+                            className="border-2  border-fil-primary rounded-md px-4 py-1  font-light"
+                          >
+                            <option value="12 Months">12 months</option>
+                            <option value="18 Months">18 Months</option>
+                          </select>
+                        </div>
+
+                        <div className="justify-center items-center flex ">
+                          <button className="text-md font-semibold  mt-8 bg-fil-secondary px-16 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
+                            Stake
+                          </button>
+                        </div>
+                      </form>
+                    </div>
                   </div>
                 </Fade>
               </>
@@ -136,8 +204,8 @@ const address = () => {
 
                     <div className=" items-center w-4/12   justify-center">
                       <p className="text-white    border-white   justify-center items-center  mt-6">
-                        A pool which returns higher interest rate but with a
-                        greater chance of loss if the loan becomes default
+                        A pool which returns lower interest rate but it is
+                        secure , safe and has a loan chance of losing liquidity
                       </p>
 
                       <div className="flex mt-12 items-center justify-center space-x-8">
@@ -148,7 +216,9 @@ const address = () => {
 
                         <div className="flex-col space-y-2">
                           <h2>Total Return</h2>
-                          <h2 className="border-2 px-8 text-center ">0 FIL</h2>
+                          <h2 className="border-2 px-8 text-center ">
+                            {s_totalReturn} FIL
+                          </h2>
                         </div>
 
                         <div className="flex-col space-y-2">
@@ -161,30 +231,56 @@ const address = () => {
                     </div>
                     <div className="h-20"></div>
                   </div>
+
+                  {/* Form */}
+                  <div className=" flex  justify-center items-center     ">
+                    <div className="flex flex-col   py-16 w-1/4 space-y-6 justify-center items-center  shadow-black rounded-xl -mt-24 bg-white shadow-md   ">
+                      <form className="space-y-6   justify-center items-center">
+                        <div className="flex  text-sm justify-between items-center space-x-10 text-black rounded-sm  bg-white     ">
+                          <div className=" font-light  w-16"> Amount</div>
+
+                          <input
+                            className="border-2  border-fil-primary rounded-md px-4 py-1  font-light"
+                            id="title"
+                            type="text"
+                            required
+                            value={s_amount}
+                            onChange={S_handleChange}
+                            placeholder="1000 FIL"
+                          />
+                        </div>
+
+                        <div className="flex  text-sm space-x-10   items-center text-black rounded-sm bg-white   ">
+                          <div className="font-light w-16"> Loan Duration</div>
+
+                          {/* <input
+                      className="border-2  border-fil-primary rounded-md px-4 py-1  font-light"
+                      id="duration"
+                      type="text"
+                      required
+                      placeholder="6 months"
+                    /> */}
+                          <select
+                            id="duration"
+                            name="duration"
+                            className="border-2  border-fil-primary rounded-md px-4 py-1  font-light"
+                          >
+                            <option value="12 Months">12 months</option>
+                            <option value="18 Months">18 Months</option>
+                          </select>
+                        </div>
+
+                        <div className="justify-center items-center flex ">
+                          <button className="text-md font-semibold  mt-8 bg-fil-secondary px-16 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
+                            Stake
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
                 </Fade>
               </>
             )}
-
-            {/* Form */}
-            <div className=" flex  justify-center items-center     ">
-              <div className="flex flex-col   py-16 w-1/4 space-y-6 justify-start items-center  shadow-black rounded-xl -mt-24 bg-white shadow-md   ">
-                <div className="flex  text-sm space-x-10      text-black rounded-sm  bg-white     ">
-                  <div className=" font-light pr-5"> Amount</div>
-                  <div className="    border-2  border-fil-primary rounded-md px-16 py-3  font-light "></div>
-                </div>
-
-                <div className="flex  text-sm space-x-10   items-center text-black rounded-sm bg-white   ">
-                  <div className=" font-light"> Loan Duration</div>
-                  <div className=" border-2  border-fil-primary rounded-md px-16 py-3 font-light "></div>
-                </div>
-
-                <div className="mt-6">
-                  <button className="text-md font-semibold   bg-fil-secondary px-16 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
-                    Stake
-                  </button>
-                </div>
-              </div>
-            </div>
 
             {/* Dashboard */}
 
@@ -263,15 +359,6 @@ const address = () => {
 };
 
 export default address;
-
-// const router = useRouter();
-// const { address, isConnecting, isDisconnected } = useAccount();
-
-// useEffect(() => {
-//   if (isConnected) {
-//     router.push(`/Lender/${address}`);
-//   }
-// }, [isConnecting, isConnected]);
 
 {
   /* Headings */
