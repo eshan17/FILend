@@ -58,26 +58,14 @@ const defaultChains = [
   // { ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : []) },
 ];
 
-const { chains, provider, webSocketProvider } = configureChains(
-  // [
-  //   mainnet,
-  //   filecoinHyperspace,
-  //   filecoin,
-  //   polygon,
-  //   optimism,
-  //   arbitrum,
-  //   ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : []),
-  // ],
-  defaultChains,
-  [
-    alchemyProvider({
-      // This is Alchemy's default API key.
-      // You can get your own at https://dashboard.alchemyapi.io
-      apiKey: "Ol2-sdEOu9L-vkvwuM9ZcTVZnDWxBqOT",
-    }),
-    publicProvider(),
-  ]
-);
+const { chains, provider, webSocketProvider } = configureChains(defaultChains, [
+  alchemyProvider({
+    // This is Alchemy's default API key.
+    // You can get your own at https://dashboard.alchemyapi.io
+    apiKey: "Ol2-sdEOu9L-vkvwuM9ZcTVZnDWxBqOT",
+  }),
+  publicProvider(),
+]);
 
 const { connectors } = getDefaultWallets({
   appName: "RainbowKit App",

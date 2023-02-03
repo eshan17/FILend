@@ -42,6 +42,9 @@ module.exports = {
         142: "142px",
         140: "140px",
       },
+      width: {
+        modal: "40%",
+      },
     },
   },
   plugins: [],
