@@ -98,4 +98,12 @@ module.exports = async ({ deployments }) => {
         maxPriorityFeePerGas: priorityFee,
         log: true,
     })
+
+    const loanManager = await deployLogError("LoanManager", {
+        contract: "LoanManager",
+        from: deployer.address,
+        args: [],
+        maxPriorityFeePerGas: priorityFee,
+        log: true,
+    })
 }
