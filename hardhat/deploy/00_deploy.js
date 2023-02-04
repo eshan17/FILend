@@ -100,7 +100,6 @@ module.exports = async ({ deployments }) => {
     })
 
     const loanManager = await deployLogError("LoanManager", {
-        contract: "LoanManager",
         from: deployer.address,
         args: [],
         maxPriorityFeePerGas: priorityFee,
