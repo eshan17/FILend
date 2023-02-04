@@ -13,7 +13,7 @@ const Navbar = ({ button, curretLink }) => {
 
   return (
     <>
-      <nav class="flex first-letter: items-center justify-around p-5 container mx-auto font-family-work-sans  ">
+      <nav className="flex first-letter: items-center justify-around p-5 container mx-auto font-family-work-sans  ">
         <h2 className="   text-4xl text-center ml-3 font-bold text-fil-primary">
           FilLend
         </h2>
