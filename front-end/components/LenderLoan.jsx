@@ -12,6 +12,7 @@ const LenderLoan = ({
   EndingDate,
   Status,
   active,
+  Tx,
 }) => {
   return (
     <>
@@ -36,7 +37,10 @@ const LenderLoan = ({
         </div>
         <div>
           {" "}
-          <button className="text-md font-semibold  bg-fil-brown px-8 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
+          <button
+            onClick={Tx}
+            className="text-md font-semibold  bg-fil-brown px-8 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110"
+          >
             Details
           </button>
         </div>
