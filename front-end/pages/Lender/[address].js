@@ -98,7 +98,7 @@ const address = () => {
           Math.round(Date.parse("05/02/2024") / 1000),
           Math.round(Date.parse("05/02/2023") / 1000)
         );
-        setLoading(true);
+//         setLoading(true);
         console.log("Minting...", txn.hash);
         let wait = await txn.wait();
         console.log("Minted -- ", txn.hash);
@@ -111,11 +111,11 @@ const address = () => {
           InterestRate: j_interestRate,
           RepaymentDate: date,
           LendingDate: currentdate,
-          // Tx: txn.hash,
+          Tx: txn.hash,
         };
         console.log("body = " + body);
         lendersData.push(body);
-        setLoading(false);
+//         setLoading(false);
       }
     } catch (e) {
       console.log("error :" + e);
