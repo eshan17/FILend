@@ -1,6 +1,6 @@
 require("hardhat-deploy")
 require("hardhat-deploy-ethers")
-
+const hh = require("hardhat");
 const ethers = require("ethers")
 const util = require("util")
 const request = util.promisify(require("request"))
@@ -105,4 +105,16 @@ module.exports = async ({ deployments }) => {
         maxPriorityFeePerGas: priorityFee,
         log: true,
     })
+
+    const provider = new hh.ethers.providers.JsonRpcProvider("https://api.hyperspace.node.glif.io/rpc/v1");
+    const signer = new ethers.Wallet(DEPLOYER_PRIVATE_KEY, provider);
+
+    const loanManagerContract = await hh.ethers.getContractAt('LoanManager', loanManager.address, signer);
+    await loanManagerContract.connect(signer).updateLenderVaultJunior(lenderVaultJunior.address);
+    await loanManagerContract.connect(signer).updateLenderVaultSenior(lenderVaultSenior.address);
+
+    const lenderVaultJuniorContract = await hh.ethers.getContractAt('LenderVault', lenderVaultJunior.address, signer);
+    await lenderVaultJuniorContract.connect(signer).updateLoanManager(loanManager.address);
+    const lenderVaultSeniorContract = await hh.ethers.getContractAt('LenderVault', lenderVaultSenior.address, signer);
+    await lenderVaultSeniorContract.connect(signer).updateLoanManager(loanManager.address);
 }

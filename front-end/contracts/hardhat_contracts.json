@@ -3680,7 +3680,7 @@
           ]
         },
         "LoanManager": {
-          "address": "0xc9045434354f2B82bcBC58880536F4F5E8508521",
+          "address": "0x86d563B776Bb148D56b244eF21762957cc5b5A79",
           "abi": [
             {
               "inputs": [],
@@ -3840,6 +3840,11 @@
                       "internalType": "uint256",
                       "name": "lendingDate",
                       "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "loanId",
+                      "type": "uint256"
                     }
                   ],
                   "internalType": "struct LoanManagerStorage.LoanRecord",
@@ -3894,6 +3899,11 @@
                   "internalType": "uint256",
                   "name": "lendingDate",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "loanId",
+                  "type": "uint256"
                 }
               ],
               "stateMutability": "view",
@@ -3901,7 +3911,7 @@
             },
             {
               "inputs": [],
-              "name": "nextLoadId",
+              "name": "nextLoanId",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -3926,8 +3936,39 @@
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "loanRecordId_",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount_",
+                  "type": "uint256"
+                }
+              ],
+              "name": "payBackFor",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "loanRecordId_",
+                  "type": "uint256"
+                }
+              ],
+              "name": "takeOutLoanTokenFor",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
