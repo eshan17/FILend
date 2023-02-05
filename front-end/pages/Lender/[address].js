@@ -183,9 +183,9 @@ const address = ({ lendersData }) => {
     const mockErcContract = await connectmockErc();
 
     try {
-      if (LoanManagerContract && JuniorVaultContract) {
+      if (mockErcContract) {
         const txn1 = await mockErcContract.wrapAndApproveTo(address, {
-          value: ethers.utils.parseEther(j_amount),
+          value: ethers.utils.parseEther(s_amount),
           gasLimit: 22000000,
         });
 
