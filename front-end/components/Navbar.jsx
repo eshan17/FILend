@@ -18,7 +18,7 @@ const Navbar = ({ button, curretLink }) => {
           FilLend
         </h2>
 
-        <div class="   flex  w-auto  font-medium mt-2 ">
+        <div className="   flex  w-auto  font-medium mt-2 ">
           <ul className=" space-x-6 font-family-work-sans items-center justify-between flex ">
             <Link
               className=" border-fil-primary inline-block hover:scale-110  transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
@@ -31,7 +31,7 @@ const Navbar = ({ button, curretLink }) => {
             </Link>
 
             <Link
-              class=" inline-block hover:scale-110  transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
+              className=" inline-block hover:scale-110  transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
               href="/Lender"
             >
               Lender
@@ -40,7 +40,7 @@ const Navbar = ({ button, curretLink }) => {
               )}
             </Link>
             <Link
-              class=" inline-block hover:scale-110  transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
+              className=" inline-block hover:scale-110  transition ease-in duration-150 text-sm hover:text-fil-primary  px-2 py-2"
               href="/Borrower"
             >
               Borrower
@@ -52,11 +52,11 @@ const Navbar = ({ button, curretLink }) => {
         </div>
 
         {button ? (
-          <a href="#" class=" flex   px-2 py-2">
+          <a href="#" className=" flex   px-2 py-2">
             <ConnectButton />
           </a>
         ) : (
-          <a href="#" class="  flex   px-2 py-2   opacity-0 ">
+          <a href="#" className="  flex   px-2 py-2   opacity-0 ">
             <ConnectButton />
           </a>
         )}
