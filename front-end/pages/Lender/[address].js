@@ -139,18 +139,18 @@ const address = ({ lendersData }) => {
 
         console.log("Minted -- ", txn1.hash);
 
-        const txn2 = await JuniorVaultContract.deposit(
-          ethers.utils.parseEther(j_amount),
-          address,
-          { gasLimit: 22000000 }
-        );
+        // const txn2 = await JuniorVaultContract.deposit(
+        //   ethers.utils.parseEther(j_amount),
+        //   address,
+        //   { gasLimit: 22000000 }
+        // );
 
         setShowModal(false);
 
-        let wait2 = await txn2.wait();
-        console.log("Minting...", txn2.hash);
+        // let wait2 = await txn2.wait();
+        // console.log("Minting...", txn2.hash);
 
-        console.log("Minted -- ", txn2.hash);
+        // console.log("Minted -- ", txn2.hash);
 
         const data = {
           Address: address,
