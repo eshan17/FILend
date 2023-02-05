@@ -18,3 +18,12 @@ app.get("/server", (req, res) => {
 app.listen(3000, () => {
   console.log("Server listening on port 3000");
 });
+
+app.post("/Lender/:address", (req, res) => {
+  var id = req.params.address;
+  console.log(req.params.address);
+});
+
+app.get("/Lender/:address", (req, res) => {
+  console.log(req.params.address);
+});
