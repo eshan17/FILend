@@ -10,11 +10,14 @@ import LenderLoan from "@/components/LenderLoan";
 import Loading from "@/components/Loading";
 import waves from "@/public/Images/waves.svg";
 import Image from "next/image";
+import svg from "@/public/Images/loan.svg";
+import svg2 from "@/public/Images/vault.svg";
 
 const address = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const { address, isConnecting, isDisconnected, isConnected, isReconnecting } =
     useAccount();
@@ -35,7 +38,7 @@ const address = () => {
         <Navbar button={true} curretLink={2} />
       </Fade>
 
-      <div>
+      <>
         {loading ? (
           <Loading />
         ) : (
@@ -61,27 +64,6 @@ const address = () => {
                   </div>
                 </div>
                 <div className="h-10"></div>
-              </div>
-
-              {/* Form */}
-              <div className=" flex  justify-center items-center     ">
-                <div className="flex flex-col   py-16 w-1/4 space-y-6 justify-start items-center  shadow-black rounded-xl -mt-16 bg-white shadow-md   ">
-                  <div className="flex  text-sm space-x-10      text-black rounded-sm  bg-white     ">
-                    <div className=" font-light pr-5"> Amount</div>
-                    <div className="    border-2  border-fil-primary rounded-md px-16 py-3  font-light "></div>
-                  </div>
-
-                  <div className="flex  text-sm space-x-10   items-center text-black rounded-sm bg-white   ">
-                    <div className=" font-light"> Loan Duration</div>
-                    <div className=" border-2  border-fil-primary rounded-md px-16 py-3 font-light "></div>
-                  </div>
-
-                  <div className="mt-6">
-                    <button className="text-md font-semibold   bg-fil-secondary px-16 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
-                      Stake
-                    </button>
-                  </div>
-                </div>
               </div>
 
               {/* Dashboard */}
@@ -156,7 +138,7 @@ const address = () => {
             </Fade>
           </>
         )}
-      </div>
+      </>
     </>
   );
 };
