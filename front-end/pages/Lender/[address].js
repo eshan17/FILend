@@ -12,15 +12,38 @@ import svg from "@/public/Images/loan.svg";
 import svg2 from "@/public/Images/vault.svg";
 import Image from "next/image";
 import LenderLoan from "@/components/LenderLoan";
-import connectContract from "@/utils/connectContract";
+import {
+  connectJuniorVault,
+  connectSeniorVault,
+  connectmockErc,
+  connectLoanManager,
+  connectlenderVault,
+} from "@/utils/connectContract";
 import { format, addMonths } from "date-fns";
-// import axios from "axios";
+
 import axios from "axios";
 import { ethers } from "ethers";
 
 const { BigNumber } = require("ethers");
 
-const address = () => {
+export async function getServerSideProps(context) {
+  const res = await fetch("http://localhost:3000/LenderData", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await res.json();
+
+  return {
+    props: {
+      lendersData: data,
+    },
+  };
+}
+
+const address = ({ lendersData }) => {
   const router = useRouter();
   const { address, isConnecting, isDisconnected, isConnected, isReconnecting } =
     useAccount();
@@ -45,7 +68,19 @@ const address = () => {
 
   const currentdate = new Date().toLocaleDateString();
 
-  const lendersData = [];
+  function increaseBy30Percent(value) {
+    console.log("value before =" + value);
+    let product = value * 0.3;
+    let sum = Number(product) + Number(value);
+    return sum;
+  }
+
+  function increaseBy20Percent(value) {
+    console.log("value before =" + value);
+    let product = value * 0.2;
+    let sum = Number(product) + Number(value);
+    return sum;
+  }
 
   const dateChange = (event) => {
     event.preventDefault();
@@ -68,12 +103,13 @@ const address = () => {
 
   const J_handleChange = (event) => {
     setJuniorAmount(event.target.value);
-    setJuniorTotalReturn(event.target.value * 1.5);
+
+    setJuniorTotalReturn(Math.round(increaseBy30Percent(event.target.value)));
   };
 
   const S_handleChange = (event2) => {
     setSeniorAmount(event2.target.value);
-    setSeniorTotalReturn(event2.target.value * 1.5);
+    setSeniorTotalReturn(Math.round(increaseBy20Percent(event2.target.value)));
   };
 
   const handleSubmit1 = (event) => {
@@ -85,24 +121,35 @@ const address = () => {
     console.log("confirm button clicked");
     event.preventDefault();
 
-    const LoanManagerContract = await connectContract();
+    const LoanManagerContract = await connectLoanManager();
+    const JuniorVaultContract = await connectJuniorVault();
+    const lenderVaultContract = await connectlenderVault();
+
+    const mockErcContract = await connectmockErc();
 
     try {
-      if (LoanManagerContract) {
-        const txn = await LoanManagerContract.addLoanRecord(
-          address,
-          j_amount,
-          18,
-          ethers.BigNumber.from(j_totalReturn),
-          j_interestRate,
-          Math.round(Date.parse("05/02/2024") / 1000),
-          Math.round(Date.parse("05/02/2023") / 1000)
-        );
-//         setLoading(true);
-        console.log("Minting...", txn.hash);
-        let wait = await txn.wait();
-        console.log("Minted -- ", txn.hash);
-        const body = {
+      if (LoanManagerContract && lenderVaultContract) {
+        const txn1 = await mockErcContract.wrapAndApproveTo(address, {
+          value: ethers.utils.parseEther(j_amount),
+          gasLimit: 22000000,
+        });
+
+        // const txn2 = await lenderVaultContract.deposit(
+        //   ethers.utils.parseEther(j_amount),
+        //   address,
+        //   { gasLimit: 22000000 }
+        // );
+
+        console.log("Minting...", txn1.hash);
+        let wait1 = await txn1.wait();
+        console.log("Minted -- ", txn1.hash);
+
+        // let wait2 = await txn2.wait();
+        // console.log("Minting...", txn2.hash);
+        // setShowModal(false);
+        // console.log("Minted -- ", txn2.hash);
+
+        const data = {
           Address: address,
           poolType: "Junior Pool",
           Amount: j_amount,
@@ -111,35 +158,77 @@ const address = () => {
           InterestRate: j_interestRate,
           RepaymentDate: date,
           LendingDate: currentdate,
-          Tx: txn.hash,
+          Tx: txn1.hash,
         };
-        console.log("body = " + body);
-        lendersData.push(body);
-//         setLoading(false);
+
+        axios
+          .post("http://localhost:3000/LenderData", data)
+          .then((response) => {
+            console.log(response.body);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
     } catch (e) {
       console.log("error :" + e);
     }
-    const body = {
-      Address: address,
-      poolType: "Junior Pool",
-      Amount: j_amount,
-      LoanDuration: duration,
-      TotalReturn: j_totalReturn,
-      InterestRate: j_interestRate,
-      RepaymentDate: date,
-      LendingDate: currentdate,
-      Tx: txn.hash,
-    };
-
-    console.log("body = " + body);
-
-    lendersData.push(body);
-    console.table(lendersData);
-
-    // setShowModal(false);
   }
 
+  async function handleSubmit3(event) {
+    console.log("confirm button clicked");
+    event.preventDefault();
+
+    const SeniorVaultContract = await connectSeniorVault();
+    const mockErcContract = await connectmockErc();
+
+    try {
+      if (LoanManagerContract && JuniorVaultContract) {
+        const txn1 = await mockErcContract.wrapAndApproveTo(address, {
+          value: ethers.utils.parseEther(j_amount),
+          gasLimit: 22000000,
+        });
+
+        // const txn2 = await SeniorVaultContract.deposit(
+        //   ethers.utils.parseEther(j_amount),
+        //   address,
+        //   { gasLimit: 22000000 }
+        // );
+
+        console.log("Minting...", txn1.hash);
+        let wait1 = await txn1.wait();
+        console.log("Minted -- ", txn1.hash);
+
+        // let wait2 = await txn2.wait();
+        // console.log("Minting...", txn2.hash);
+        // setShowModal(false);
+        // console.log("Minted -- ", txn2.hash);
+
+        const data = {
+          Address: address,
+          poolType: "Senior Pool",
+          Amount: s_amount,
+          LoanDuration: duration,
+          TotalReturn: s_totalReturn,
+          InterestRate: s_interestRate,
+          RepaymentDate: date,
+          LendingDate: currentdate,
+          Tx: txn1.hash,
+        };
+
+        axios
+          .post("http://localhost:3000/LenderData", data)
+          .then((response) => {
+            console.log(response.body);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    } catch (e) {
+      console.log("error :" + e);
+    }
+  }
   console.table(lendersData);
 
   useEffect(() => {
@@ -240,10 +329,6 @@ const address = () => {
                               className={`bg-white py-5 blur-none -mt-8 h-96 z-50 md:filter-none  
                               px-16 relative flex flex-col   w-modal space-y-2  border-2 border-black  shadow-black rounded-xl `}
                             >
-                              {/* <h1 className="text-3xl justify-center items-center text-fil-primary font-bold">
-                            Lend Loan
-                          </h1> */}
-
                               {/* Left side */}
                               <div classname="  flex  border-black">
                                 <div className="text-black text-xl    ">
@@ -278,6 +363,7 @@ const address = () => {
                                       src={svg2}
                                       width={220}
                                       height={300}
+                                      alt={"a money safe"}
                                     />
                                   </div>
                                 </div>
@@ -326,7 +412,7 @@ const address = () => {
                             id="title"
                             type="number"
                             required
-                            min={minAmount}
+                            min={0}
                             onChange={J_handleChange}
                             placeholder="100 FIL"
                           />
@@ -337,7 +423,7 @@ const address = () => {
 
                           <select
                             required
-                            className="border-2  border-black focus:border-fil-primary rounded-md px-4 py-1  font-medium"
+                            className="border-2 border-black focus:border-fil-primary rounded-md px-4 py-1  font-medium"
                             onChange={dateChange}
                           >
                             <option value="18 Months">18 Months</option>
@@ -347,7 +433,6 @@ const address = () => {
 
                         <div className="justify-center items-center flex ">
                           <button
-                            // onClick={() => setShowModal(true)}
                             type="submit"
                             className="text-md font-semibold  mt-8 bg-fil-secondary px-16 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110"
                           >
@@ -460,12 +545,13 @@ const address = () => {
                                       src={svg2}
                                       width={220}
                                       height={300}
+                                      alt={"a money safe"}
                                     />
                                   </div>
                                 </div>
                               </div>
 
-                              <form onSubmit={handleSubmit2}>
+                              <form onSubmit={handleSubmit3}>
                                 <div className="flex flex-row w-full   justify-center pb-8 space-x-12 items-center transition ease-in duration-150 ">
                                   <button
                                     onClick={() => setShowModal(false)}
@@ -508,7 +594,7 @@ const address = () => {
                             id="title"
                             type="number"
                             required
-                            min={minAmount}
+                            min={0}
                             onChange={S_handleChange}
                             placeholder="100 FIL"
                           />
@@ -561,89 +647,29 @@ const address = () => {
                 <div>Transaction</div>
               </div>
 
-              {/* .filter((loan) => loan.Address == address)*/}
-
               {lendersData &&
-                lendersData.map((loan, index) => (
-                  <LenderLoan
-                    key={index}
-                    SerialNo={index + 1}
-                    PoolType={"Junior Pool"}
-                    LendAmount={`${loan.Amount} FIL`}
-                    TotalReturn={`${loan.TotalReturn} FIL`}
-                    InterestRate={`${loan.InterestRate}`}
-                    LendingDate={loan.LendingDate}
-                    EndingDate={loan.RepaymentDate}
-                    Status={"Active"}
-                    active={true}
-                    Tx={loan.Tx}
-                  />
-                ))}
-
-              {/* {lendersData && (
-                <LenderLoan
-                  SerialNo={1}
-                  PoolType={"Junior Pool"}
-                  LendAmount={"200 FIL"}
-                  TotalReturn={"300 FIL"}
-                  InterestRate={"30%"}
-                  LendingDate={"04/09/2023"}
-                  EndingDate={"04/09/2024"}
-                  Status={"Active"}
-                  active={true}
-                />
-              )} */}
-
-              {/* <LenderLoan
-                SerialNo={1}
-                PoolType={"Junior Pool"}
-                LendAmount={"200 FIL"}
-                TotalReturn={"300 FIL"}
-                InterestRate={"30%"}
-                LendingDate={"04/09/2023"}
-                EndingDate={"04/09/2024"}
-                Status={"Active"}
-                active={true}
-              />
-
-              <LenderLoan
-                SerialNo={2}
-                PoolType={"Senior Pool"}
-                LendAmount={"200 FIL"}
-                TotalReturn={"300 FIL"}
-                InterestRate={"30%"}
-                LendingDate={"04/09/2023"}
-                EndingDate={"04/09/2024"}
-                Status={"Completed"}
-                active={false}
-              />
-
-              <LenderLoan
-                SerialNo={3}
-                PoolType={"Senior Pool"}
-                LendAmount={"200 FIL"}
-                TotalReturn={"300 FIL"}
-                InterestRate={"30%"}
-                LendingDate={"04/09/2023"}
-                EndingDate={"04/09/2024"}
-                Status={"Active"}
-                active={true}
-              />
-
-              <LenderLoan
-                SerialNo={4}
-                PoolType={"Senior Pool"}
-                LendAmount={"200 FIL"}
-                TotalReturn={"300 FIL"}
-                InterestRate={"30%"}
-                LendingDate={"04/09/2023"}
-                EndingDate={"04/09/2024"}
-                Status={"Active"}
-                active={true}
-              /> */}
+                lendersData
+                  .filter((loan) => loan.Address === address)
+                  .map((loan, index) => (
+                    <Fade>
+                      <LenderLoan
+                        key={index}
+                        SerialNo={index + 1}
+                        PoolType={"Junior Pool"}
+                        LendAmount={`${loan.Amount} FIL`}
+                        TotalReturn={`${loan.TotalReturn} FIL`}
+                        InterestRate={`${loan.InterestRate}`}
+                        LendingDate={loan.LendingDate}
+                        EndingDate={loan.RepaymentDate}
+                        Status={"Active"}
+                        active={true}
+                        Tx={loan.Tx}
+                      />
+                    </Fade>
+                  ))}
             </div>
 
-            <Image src={waves} />
+            <Image src={waves} alt={"blue waves"} />
           </Fade>
         </>
       )}
@@ -652,155 +678,3 @@ const address = () => {
 };
 
 export default address;
-
-{
-  /* Headings */
-}
-{
-  /* <div className="mt-4 mx-auto w-full text-sm flex justify-around border-2 items-center text-black font-medium ">
-                <div>S.No</div>
-                <div>Pool Type</div>
-                <div>Lend Amount</div>
-                <div>Total Return</div>
-                <div>Interest Rate</div>
-                <div>Lending Date</div>
-                <div>End Date</div>
-                <div>Status</div>
-                <div>Transaction</div>
-              </div>
-
-              <div className="mt-4 mx-auto w-full text-lg flex justify-around border-2 items-center text-black font-medium ">
-                <div>1</div>
-                <div>Junior Pool</div>
-                <div>200 FIL</div>
-                <div>300 FIL</div>
-                <div>30 %</div>
-                <div>08/02/2023</div>
-                <div>08/02/2024</div>
-                <div>
-                  <button className="text-md font-semibold  bg-puprle px-4 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
-                    Active
-                  </button>
-                </div>
-                <div>
-                  {" "}
-                  <button className="text-md font-semibold  bg-fil-brown px-4 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
-                    Details
-                  </button>
-                </div>
-              </div> */
-}
-
-// sendData(address, body);
-
-// try {
-//   const sendresponse = await axios.post("/api/data", {
-//     j_amount,
-//   });
-
-//   console.log("send" + sendresponse.data);
-// } catch (error) {
-//   console.error(error);
-// }
-
-// const data = getData();
-// console.log("data = " + data);
-
-// try {
-//   const response = await fetch("/api/store-event-data", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(body),
-//   });
-//   if (response.status !== 200) {
-//     alert("Oops! Something went wrong . Please refresh and try again.");
-//   } else {
-//     console.log("Form successfully submitted!");
-//     let responseJSON = await response.json();
-//     console.log(responseJSON.cid);
-//     console.log("Responce ", responseJSON);
-//     axios
-//       .get(`https://web3.storage/ipfs/${cid}`)
-//       .then((response) => {
-//         const data = response.data;
-//         // use the data as needed
-//       })
-//       .catch((error) => {
-//         console.error(error);
-//       });
-
-//     // console.log("Responce body ", responseJSON.body);
-//     // console.log("Responce LoanDuration ", responseJSON.LoanDuration);
-//     // console.log("Responce TotalReturn", responseJSON.TotalReturn);
-//     // console.log("Responce InterestRate ", responseJSON.InterestRate);
-//     // console.log("Responce RepaymentDate ", responseJSON.RepaymentDate);
-//     // console.log("Responce LendingDat ", responseJSON.LendingDate);
-
-//     // await createEvent(responseJSON.cid);
-//   }
-//   // check response, if success is false, dont take them to success page
-// } catch (error) {
-//   alert(
-//     ` catch Oops! Something went wrong. Please refresh and try again. Error ${error}`
-//   );
-// }
-
-// const contractlenderVault = await ethers.getContractAt(
-//   "LenderVault",
-//   lenderVaultAddress
-// );
-// const contractlenderVaultJunior = await ethers.getContractAt(
-//   "LenderVaultJunior",
-//   LenderVaultJunior
-// );
-// const contractlenderVaultSenior = await ethers.getContractAt(
-//   "LenderVaultSenior",
-//   lenderVaultSenior
-// );
-// const contractmockErc = await ethers.getContractAt(
-//   "MockERC20",
-//   mockErcAddress
-// );
-// const contractLoanManager = await ethers.getContractAt(
-//   "LoanManager",
-//   LoanManager
-// );
-
-{
-  /* Form
-                  <div className=" flex  justify-center items-center     ">
-                    <div className="flex flex-col   py-16 w-1/4 space-y-6 justify-center items-center  shadow-black rounded-xl -mt-24 bg-white shadow-md   ">
-                      <form className="space-y-6   justify-center items-center">
-                        <div className="flex  text-sm justify-between items-center space-x-10 text-black rounded-sm  bg-white     ">
-                          <div className=" font-light  w-16"> Amount</div>
-
-                          <input
-                            className="border-2  border-fil-primary rounded-md px-4 py-1 font-medium"
-                            id="title"
-                            type="number"
-                            min={minAmount}
-                            required
-                            value={s_amount}
-                            onChange={S_handleChange}
-                            placeholder="1000 FIL"
-                          />
-                        </div>
-
-                        <div className="flex  text-sm space-x-10   items-center text-black rounded-sm bg-white   ">
-                          <div className="font-light w-16"> Loan Duration</div>
-
-                          <select className="border-2  border-fil-primary rounded-md px-4 py-1 font-medium">
-                            <option value="12 Months">12 months</option>
-                            <option value="18 Months">18 Months</option>
-                          </select>
-                        </div>
-
-                        <div className="justify-center items-center flex ">
-                          <button className="text-md font-semibold  mt-8 bg-fil-secondary px-16 py-2 text-white rounded-lg transition ease-in duration-150 text-sm hover:scale-110">
-                            Lend
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </div> */
-}
