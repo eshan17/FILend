@@ -86,7 +86,7 @@ describe("LenderVault", function () {
             await expect(tx0).to.be.revertedWith("Ownable: caller is not the owner");
         });
         it("Owner should be able to updateLoanManager", async function () {
-            const tx0 = lenderVault.connect(owner).updateLoanManager(loanManager.address);
+            const tx0 = await lenderVault.connect(owner).updateLoanManager(loanManager.address);
             expect(tx0).to.emit(lenderVault, 'LoanManagerUpdated').withArgs(loanManager.address);            
         });
     });
