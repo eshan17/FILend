@@ -25,11 +25,7 @@ before(async function () {
     depositAmount1 = ethers.utils.parseEther('100');
     depositAmount3 = ethers.utils.parseEther('100');
     loanAmount2 = ethers.utils.parseEther('140');
-    paybackPrincipal2 = ethers.utils.parseEther('5');
-    paybackInterest2 = ethers.utils.parseEther('5');
-    lossPrincipal2 = ethers.utils.parseEther('2');
-    lockPeriod3 = 100000;
-    wrapAmount4 = ethers.utils.parseEther('500');
+    paybackAmount2 = ethers.utils.parseEther('10');
 });
   
 describe("LoanManager", function () {
@@ -94,11 +90,22 @@ describe("LoanManager", function () {
         });
     });
 
-    describe("borrowFromVaultFor", function () {
+    describe("takeOutLoanTokenFor", function () {
         it("User should be able to borrow from loanManager", async function () {
-            const tx0 = await loanManager.connect(borrower2).borrowFromVaultFor(1);
+            const tx0 = await loanManager.connect(borrower2).takeOutLoanTokenFor(1);
             expect(await mockERC20.balanceOf(borrower2.address)).to.equal(loanAmount2);
+            const tx1 = await mockERC20.connect(borrower2).unwrap(loanAmount2);
         });
     });
 
+    describe("payBackFor", function () {
+        it("User should be able to payback loanManager", async function () {
+            const tx0 = await mockERC20.connect(borrower2).wrapAndApproveTo(loanManager.address, {value: paybackAmount2}); //wrap native token (tFIL) to test token and approve
+            const tx1 = await loanManager.connect(borrower2).payBackFor(1, paybackAmount2);
+            const loanRecord = await loanManager.getLoanRecordOf(1);
+            expect(loanRecord.totalReturn).to.equal(paybackAmount2);
+            expect(await lenderVaultJunior.totalInterestReceived()).to.be.greaterThan(0);
+            expect(await lenderVaultSenior.totalInterestReceived()).to.be.greaterThan(0);
+        });
+    });
 });
