@@ -24,7 +24,10 @@ contract LoanManagerStorage {
         uint lendingDate;
     }
 
-    uint256 public nextLoadId = 1;
+    uint256 public nextLoanId = 1;
     LoanRecord[] public loanRecords;
-    mapping(address => EnumerableSet.UintSet) internal borrowerLoanRecordIdSetMap;
+    mapping(address => EnumerableSet.UintSet) internal _borrowerLoanRecordIdSetMap;
+
+    mapping(uint256 => uint256) internal _loanRecordIdToJuniorAmountMap;
+    mapping(uint256 => uint256) internal _loanRecordIdToSeniorAmountMap;
 }

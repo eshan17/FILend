@@ -105,4 +105,8 @@ module.exports = async ({ deployments }) => {
         maxPriorityFeePerGas: priorityFee,
         log: true,
     })
+    await loanManager.updateLenderVaultJunior(lenderVaultJunior.address);
+    await loanManager.updateLenderVaultSenior(lenderVaultSenior.address);
+    await lenderVaultJunior.updateLoanManager(loanManager.address);
+    await lenderVaultSenior.updateLoanManager(loanManager.address);
 }
