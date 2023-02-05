@@ -37,7 +37,17 @@ SPs must be able to pay the protocol back, or malicious SPs will hijack the prot
 
 ## TechStack
 
-Tech stack: FVM, Hyperspace, Hardhat, Solidity, openzeppelin, figma, next.js, ether.js, Metamask 
+Tech stack: 
+- FVM Hyperspace
+- Hardhat
+- Solidity
+- openzeppelin
+- figma
+- next.js 
+- ether.js
+- Metamask 
+- node.js
+- express.js
 <br>
 Standard: ERC4626, ERC20
 
