@@ -128,26 +128,29 @@ const address = ({ lendersData }) => {
     const mockErcContract = await connectmockErc();
 
     try {
-      if (LoanManagerContract && lenderVaultContract) {
+      if (mockErcContract && JuniorVaultContract) {
         const txn1 = await mockErcContract.wrapAndApproveTo(address, {
           value: ethers.utils.parseEther(j_amount),
           gasLimit: 22000000,
         });
 
-        // const txn2 = await lenderVaultContract.deposit(
-        //   ethers.utils.parseEther(j_amount),
-        //   address,
-        //   { gasLimit: 22000000 }
-        // );
-
-        console.log("Minting...", txn1.hash);
         let wait1 = await txn1.wait();
+        console.log("Minting...", txn1.hash);
+
         console.log("Minted -- ", txn1.hash);
 
-        // let wait2 = await txn2.wait();
-        // console.log("Minting...", txn2.hash);
-        // setShowModal(false);
-        // console.log("Minted -- ", txn2.hash);
+        const txn2 = await JuniorVaultContract.deposit(
+          ethers.utils.parseEther(j_amount),
+          address,
+          { gasLimit: 22000000 }
+        );
+
+        setShowModal(false);
+
+        let wait2 = await txn2.wait();
+        console.log("Minting...", txn2.hash);
+
+        console.log("Minted -- ", txn2.hash);
 
         const data = {
           Address: address,
@@ -655,7 +658,7 @@ const address = ({ lendersData }) => {
                       <LenderLoan
                         key={index}
                         SerialNo={index + 1}
-                        PoolType={"Junior Pool"}
+                        PoolType={loan.poolType}
                         LendAmount={`${loan.Amount} FIL`}
                         TotalReturn={`${loan.TotalReturn} FIL`}
                         InterestRate={`${loan.InterestRate}`}
