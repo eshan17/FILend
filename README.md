@@ -83,5 +83,8 @@ Run front-end
 
 
 ## Express server 
-uri : https://vercel.com/umershaikh123/fil-lend-server/DG8BGELE9WzB7jeZ7P2AJ5d3BXvf
+deployed : https://vercel.com/umershaikh123/fil-lend-server/DG8BGELE9WzB7jeZ7P2AJ5d3BXvf
 
+<br>
+
+repo : https://github.com/umershaikh123/FilLendServer
