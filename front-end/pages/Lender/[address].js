@@ -27,7 +27,7 @@ import { ethers } from "ethers";
 const { BigNumber } = require("ethers");
 
 export async function getServerSideProps(context) {
-  const res = await fetch("https://fil-lend-server-3lxeozrph-umershaikh123.vercel.app", {
+  const res = await fetch("https://fil-lend-server-9bd92va2h-umershaikh123.vercel.app", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -165,7 +165,7 @@ const address = ({ lendersData }) => {
         };
 
         axios
-          .post("https://fil-lend-server-3lxeozrph-umershaikh123.vercel.app", data)
+          .post("https://fil-lend-server-9bd92va2h-umershaikh123.vercel.app", data)
           .then((response) => {
             console.log(response.body);
           })
@@ -220,7 +220,7 @@ const address = ({ lendersData }) => {
         };
 
         axios
-          .post("https://fil-lend-server-3lxeozrph-umershaikh123.vercel.app", data)
+          .post("https://fil-lend-server-9bd92va2h-umershaikh123.vercel.app", data)
           .then((response) => {
             console.log(response.body);
           })
