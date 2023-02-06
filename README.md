@@ -67,6 +67,9 @@ Seeked sponsor mentorship and the team help tagged someone in Zondax. Unfortunat
 - Frontend dApp was deployed to Spheron (sponsor).
 
 
+## Figma Designs
+Link : https://www.figma.com/file/51fVYxckwjrOmvQkbX00RW/FVM-Hackathon?node-id=0%3A1&t=vzz1roWLAsavnkhd-1
+
 ## How to Run project
 
 This is a Next.js (12) project .
