@@ -86,7 +86,7 @@ Run front-end
 
 
 ## Express server 
-deployed : https://vercel.com/umershaikh123/fil-lend-server/DG8BGELE9WzB7jeZ7P2AJ5d3BXvf
+deployed : https://fil-lend-server-9bd92va2h-umershaikh123.vercel.app/
 
 <br>
 
